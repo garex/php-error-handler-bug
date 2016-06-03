@@ -1,25 +1,23 @@
 <?php
-function initialHandler($code, $message) {
-  echo implode("\t", [__FUNCTION__, $code, $message]) . PHP_EOL;
-  // Bug will be only if set/reset inside current handler
+$_SERVER['counter'] = 0;
 
-  if (E_STRICT == $code) {
-    exit(2);
-  }
+set_error_handler('handler1', E_ALL);
+trigger_error('notice 1',  E_USER_NOTICE); // OK
+trigger_error('notice 2',  E_USER_NOTICE); // not caught !
 
-  set_error_handler('anotherHandler');
-  restore_error_handler();
+function handler1($errrno, $errstr)
+{
+    ++$_SERVER['counter'];
+    echo __FUNCTION__ . ": $errstr\n";
+    set_error_handler('handler2', E_USER_WARNING);
+    restore_error_handler();
 }
 
-function anotherHandler($code, $message) {
-  echo implode("\t", [__FUNCTION__, $code, $message]) . PHP_EOL;
+function handler2($errrno, $errstr)
+{
+    echo __FUNCTION__ . ": $errstr\n";
 }
 
-set_error_handler('initialHandler', E_ALL & ~E_STRICT);
-// When you set/reset outside -- there will no bug
-// set_error_handler('anotherHandler');
-// restore_error_handler();
-
-1/0;
-reset(explode(',', ','));
-1/0;
+if ($_SERVER['counter'] < 2) {
+  die('2nd call was not caught' . PHP_EOL);
+}
