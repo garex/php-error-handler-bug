@@ -1,5 +1,7 @@
 # php-error-handler-bug
 
+https://bugs.php.net/bug.php?id=63206
+
 When you reset error handler inside current working error handler, it's mask ignored.
 
 ## Expected

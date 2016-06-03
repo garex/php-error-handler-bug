@@ -19,5 +19,6 @@ function handler2($errrno, $errstr)
 }
 
 if ($_SERVER['counter'] < 2) {
-  die('2nd call was not caught' . PHP_EOL);
+  echo '2nd call was not caught' . PHP_EOL;
+  exit(2);
 }
